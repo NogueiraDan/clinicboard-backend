@@ -1,0 +1,37 @@
+apiVersion: 1
+
+datasources:
+  # Métricas
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    uid: prometheus
+    isDefault: true
+    editable: true
+
+  # Logs
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    uid: loki
+    editable: true
+    jsonData:
+      maxLines: 1000
+
+  # Traces
+  - name: Zipkin
+    type: zipkin
+    access: proxy
+    url: http://zipkin:9411
+    uid: zipkin
+    editable: true
+    jsonData:
+      nodeGraph:
+        enabled: true
+      # Configurações adicionais para Zipkin
+      traceQuery:
+        timeFilterPresentation: 'server'
+      spanBar:
+        type: 'tag'

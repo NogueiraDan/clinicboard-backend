@@ -1,0 +1,140 @@
+services:
+  redis:
+    image: redis
+    container_name: redis
+    restart: on-failure
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    networks:
+      - clinicboard
+
+  service-discovery:
+    build:
+      context: ./service-discovery
+    image: service-discovery
+    container_name: service-discovery
+    restart: on-failure
+    environment:
+      - ZIPKIN_URL=http://zipkin:9411
+    ports:
+      - "8761:8761"
+    networks:
+      - clinicboard
+
+  gateway-service:
+    build:
+      context: ./gateway
+    image: gateway-service
+    container_name: gateway-service
+    restart: on-failure
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=clinicboard-token-secret-key
+      - ZIPKIN_URL=http://zipkin:9411
+    ports:
+      - "8080:8080"
+    networks:
+      - clinicboard
+    depends_on:
+      - service-discovery
+      - redis
+
+  user-service:
+    build:
+      context: ./user-service
+    image: user-service
+    container_name: user-service
+    restart: on-failure
+    environment:
+      - JWT_SECRET=clinicboard-token-secret-key
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - DATABASE_URL=jdbc:postgresql://${PGHOST}/${PGDATABASE}?user=${PGUSER}&password=${PGPASSWORD}&sslmode=require
+      - DATABASE_USER=${PGUSER}
+      - DATABASE_PASSWORD=${PGPASSWORD}
+      - ZIPKIN_URL=http://zipkin:9411
+    ports:
+      - "8081:8081"
+    networks:
+      - clinicboard
+    depends_on:
+      - service-discovery
+      - gateway-service
+
+  # ===== MÉTRICAS =====
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./_observability/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - clinicboard
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./_observability/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    ports:
+      - "3000:3000"
+    networks:
+      - clinicboard
+
+  # ===== TRACES DISTRIBUÍDOS =====
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - clinicboard
+    environment:
+      - STORAGE_TYPE=mem
+
+  # ===== LOGS CENTRALIZADOS =====
+  loki:
+    image: grafana/loki
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - clinicboard
+    volumes:
+      - loki_data:/loki
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./_observability/promtail/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - clinicboard
+    depends_on:
+      - loki
+
+networks:
+  clinicboard:
+    driver: bridge
+
+volumes:
+  redis_data:
+  grafana_data:
+  loki_data:
