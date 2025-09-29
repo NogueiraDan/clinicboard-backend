@@ -31,11 +31,17 @@ public class GatewayConfig {
                                                                 "/${segment}"))
                                                 .uri("lb://user-service"))
 
-                                // User Service - Auth endpoints (login/register) - ROTA CORRIGIDA
+                                // User Service - Auth endpoints (login/register)
                                 .route("user-service-auth", r -> r.path("/user-service/auth/**")
                                                 .filters(f -> f.rewritePath("/user-service/(?<segment>.*)",
                                                                 "/${segment}"))
                                                 .uri("lb://user-service"))
+
+                                // Business Service - Health Checks
+                                .route("business-service-health", r -> r.path("/business-service/actuator/**")
+                                                .filters(f -> f.rewritePath("/business-service/(?<segment>.*)",
+                                                                "/${segment}"))
+                                                .uri("lb://business-service"))
 
                                 // =================================================================
                                 // 🔒 PROTECTED ROUTES (COM AUTENTICAÇÃO)
@@ -58,13 +64,13 @@ public class GatewayConfig {
                                                                                 "/${segment}"))
                                                 .uri("lb://user-service"))
 
-                                // Scheduling Service - All routes protected
-                                .route("scheduling-service-protected", r -> r.path("/scheduling-service/**")
+                                // Business Service - All routes protected
+                                .route("business-service-protected", r -> r.path("/business-service/**")
                                                 .filters(f -> f
                                                                 .filter(authenticationGatewayFilter)
-                                                                .rewritePath("/scheduling-service/(?<segment>.*)",
+                                                                .rewritePath("/business-service/(?<segment>.*)",
                                                                                 "/${segment}"))
-                                                .uri("lb://scheduling-service"))
+                                                .uri("lb://business-service"))
 
                                 .build();
         }

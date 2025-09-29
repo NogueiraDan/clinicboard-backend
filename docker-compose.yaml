@@ -10,6 +10,21 @@ services:
     networks:
       - clinicboard
 
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: rabbitmq
+    restart: on-failure
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - clinicboard
+
   service-discovery:
     build:
       context: ./service-discovery
@@ -62,6 +77,27 @@ services:
       - clinicboard
     depends_on:
       - service-discovery
+      - gateway-service
+
+  business-service:
+    build:
+      context: ./business-service
+    image: business-service
+    container_name: business-service
+    restart: on-failure
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-discovery:8761/eureka/
+      - DATABASE_URL=jdbc:postgresql://${PGHOST}/${PGDATABASE}?user=${PGUSER}&password=${PGPASSWORD}&sslmode=require
+      - DATABASE_USER=${PGUSER}
+      - DATABASE_PASSWORD=${PGPASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+    ports:
+      - "8082:8082"
+    networks:
+      - clinicboard
+    depends_on:
+      - service-discovery
+      - rabbitmq
       - gateway-service
 
   # ===== MÉTRICAS =====
@@ -135,6 +171,7 @@ networks:
     driver: bridge
 
 volumes:
+  rabbitmq_data:
   redis_data:
   grafana_data:
   loki_data:
