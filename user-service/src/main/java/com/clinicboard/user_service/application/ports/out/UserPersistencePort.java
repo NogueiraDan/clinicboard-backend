@@ -5,7 +5,7 @@ import java.util.List;
 import com.clinicboard.user_service.application.dto.UpdateUserRequestDto;
 import com.clinicboard.user_service.application.dto.UserRequestDto;
 import com.clinicboard.user_service.application.dto.UserResponseDto;
-import com.clinicboard.user_service.infrastructure.adapters.out.UserRepository;
+import com.clinicboard.user_service.infrastructure.adapters.out.persistence.UserRepository;
 
 public interface UserPersistencePort {
     UserRepository getUserRepository();

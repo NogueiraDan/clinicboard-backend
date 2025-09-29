@@ -9,7 +9,7 @@ import com.clinicboard.user_service.application.dto.UserRequestDto;
 import com.clinicboard.user_service.application.dto.UserResponseDto;
 import com.clinicboard.user_service.application.ports.in.UserUseCasesPort;
 import com.clinicboard.user_service.application.ports.out.UserPersistencePort;
-import com.clinicboard.user_service.infrastructure.adapters.out.UserRepository;
+import com.clinicboard.user_service.infrastructure.adapters.out.persistence.UserRepository;
 
 @Service
 public class UserUseCases implements UserUseCasesPort {

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.clinicboard.user_service.application.ports.out.UserPersistencePort;
-import com.clinicboard.user_service.infrastructure.adapters.out.UserRepository;
+import com.clinicboard.user_service.infrastructure.adapters.out.persistence.UserRepository;
 
 @Service
 public class AuthorizationService implements UserDetailsService {

@@ -1,4 +1,4 @@
-package com.clinicboard.user_service.infrastructure.adapters.out;
+package com.clinicboard.user_service.infrastructure.adapters.out.persistence;
 
 
 import org.mapstruct.Mapper;
