@@ -8,15 +8,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Adaptador de entrada para consumo de eventos via RabbitMQ.
- * 
- * Este adaptador recebe eventos publicados pelo business-service
- * e delega o processamento para os casos de uso apropriados.
- * 
- * Segue o padrão Hexagonal Architecture onde os adaptadores de entrada
- * são responsáveis por receber requisições externas e convertê-las
- * em chamadas para as portas de entrada da aplicação.
- * 
+ * Adaptador de entrada para consumo de eventos via RabbitMQ. * 
  * Implementa Circuit Breaker pattern através de Dead Letter Queue (DLQ)
  * para tratamento de falhas e reprocessamento de mensagens.
  */
