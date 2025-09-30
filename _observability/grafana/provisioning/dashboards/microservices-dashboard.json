@@ -106,7 +106,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "up{job=~\"gateway|user-service|service-discovery\"}",
+          "expr": "up{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}",
           "refId": "A"
         }
       ],
@@ -172,7 +172,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"5..\", job=~\"gateway|user-service|service-discovery\"}[5m]))",
+          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"5..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[5m]))",
           "refId": "A"
         }
       ],
@@ -238,7 +238,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"4..\", job=~\"gateway|user-service|service-discovery\"}[5m]))",
+          "expr": "sum(increase(http_server_requests_seconds_count{status=~\"4..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[5m]))",
           "refId": "A"
         }
       ],
@@ -337,7 +337,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|service-discovery\"}[1m])) by (instance)",
+          "expr": "sum(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) by (instance)",
           "refId": "A",
           "legendFormat": "{{instance}}"
         }
@@ -432,7 +432,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=~\"gateway|user-service|service-discovery\"}[1m])) by (instance, le))",
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) by (instance, le))",
           "refId": "A",
           "legendFormat": "P95 - {{instance}}"
         },
@@ -441,7 +441,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by(instance)(rate(http_server_requests_seconds_sum{job=~\"gateway|user-service|service-discovery\"}[1m])) / sum by(instance)(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|service-discovery\"}[1m]))",
+          "expr": "sum by(instance)(rate(http_server_requests_seconds_sum{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) / sum by(instance)(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m]))",
           "refId": "B",
           "legendFormat": "Média - {{instance}}"
         }
@@ -541,7 +541,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"2..\", job=~\"gateway|user-service|service-discovery\"}[1m])) by (instance)",
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"2..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) by (instance)",
           "refId": "A",
           "legendFormat": "✅ 2xx - {{instance}}"
         },
@@ -550,7 +550,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"4..\", job=~\"gateway|user-service|service-discovery\"}[1m])) by (instance)",
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"4..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) by (instance)",
           "refId": "B",
           "legendFormat": "⚠️ 4xx - {{instance}}"
         },
@@ -559,7 +559,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\", job=~\"gateway|user-service|service-discovery\"}[1m])) by (instance)",
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[1m])) by (instance)",
           "refId": "C",
           "legendFormat": "🚨 5xx - {{instance}}"
         }
@@ -625,7 +625,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "(sum(rate(http_server_requests_seconds_count{status!~\"5..\", job=~\"gateway|user-service|service-discovery\"}[5m])) by (instance) / sum(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|service-discovery\"}[5m])) by (instance)) * 100",
+          "expr": "(sum(rate(http_server_requests_seconds_count{status!~\"5..\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[5m])) by (instance) / sum(rate(http_server_requests_seconds_count{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}[5m])) by (instance)) * 100",
           "refId": "A"
         }
       ],
@@ -703,7 +703,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "system_cpu_usage{job=~\"gateway|user-service|service-discovery\"}",
+          "expr": "system_cpu_usage{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}",
           "refId": "A"
         }
       ],
@@ -789,7 +789,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(jvm_memory_used_bytes{area=\"heap\", job=~\"gateway|user-service|service-discovery\"}) by (instance)",
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\", job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}) by (instance)",
           "refId": "A",
           "legendFormat": "Heap - {{instance}}"
         }
@@ -876,7 +876,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "process_uptime_seconds{job=~\"gateway|user-service|service-discovery\"}",
+          "expr": "process_uptime_seconds{job=~\"gateway|user-service|business-service|notification-service|service-discovery\"}",
           "refId": "A",
           "legendFormat": "⏱️ {{instance}}"
         }
@@ -894,7 +894,7 @@
       },
       "id": 104,
       "panels": [],
-      "title": "🗄️ CACHE REDIS & NEGÓCIO",
+      "title": "🗄️ CACHE REDIS & MESSAGING",
       "type": "row"
     },
     {
@@ -953,7 +953,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 35
       },
@@ -983,6 +983,169 @@
       ],
       "title": "🗄️ Cache Redis - Operações/s",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 95
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 35
+      },
+      "id": 13,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "(1 - (rate(lettuce_command_completion_total{command=\"GET\", job=\"gateway\"}[5m]) / (rate(lettuce_command_completion_total{command=\"GET\", job=\"gateway\"}[5m]) + rate(lettuce_command_completion_total{command=\"SET\", job=\"gateway\"}[5m])))) * 100",
+          "refId": "A"
+        }
+      ],
+      "title": "📊 Redis Cache Hit Rate",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 35
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": ["mean"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "rate(spring_rabbitmq_listener_calls_total{job=~\"business-service|notification-service\"}[1m])",
+          "refId": "A",
+          "legendFormat": "📨 RabbitMQ {{listener}} - {{instance}}"
+        }
+      ],
+      "title": "🐰 RabbitMQ - Mensagens/s",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 43
+      },
+      "id": 105,
+      "panels": [],
+      "title": "📊 MÉTRICAS DE NEGÓCIO",
+      "type": "row"
     },
     {
       "datasource": {
@@ -1041,10 +1204,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 35
+        "x": 0,
+        "y": 44
       },
-      "id": 12,
+      "id": 15,
       "options": {
         "legend": {
           "calcs": ["mean"],
@@ -1075,9 +1238,114 @@
           "expr": "sum(rate(http_server_requests_seconds_count{uri=~\".*/users.*\", job=\"user-service\"}[1m]))",
           "refId": "B",
           "legendFormat": "👤 User Operations"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(http_server_requests_seconds_count{uri=~\".*/appointments.*\", job=\"business-service\"}[1m]))",
+          "refId": "C",
+          "legendFormat": "📅 Appointments"
         }
       ],
       "title": "👤 Operações de Negócio",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 44
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": ["mean"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "increase(spring_rabbitmq_listener_calls_total{listener=~\".*scheduled.*\", job=\"notification-service\"}[5m])",
+          "refId": "A",
+          "legendFormat": "📩 Notificações Agendamento"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "increase(spring_rabbitmq_listener_calls_total{listener=~\".*failed.*\", job=\"notification-service\"}[5m])",
+          "refId": "B",
+          "legendFormat": "⚠️ Mensagens DLQ"
+        }
+      ],
+      "title": "📨 Eventos de Notificação",
       "type": "timeseries"
     }
   ],

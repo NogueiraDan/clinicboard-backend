@@ -15,6 +15,18 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
 
+  - job_name: 'business-service'
+    static_configs:
+      - targets: ['business-service:8082']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
+  - job_name: 'notification-service'
+    static_configs:
+      - targets: ['notification-service:8083']
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+
   - job_name: 'service-discovery'
     static_configs:
       - targets: ['service-discovery:8761']
