@@ -47,8 +47,8 @@ public class AppointmentUseCases implements AppointmentUseCasesPort {
     }
 
     @Override
-    public List<AppointmentResponseDto> findSchedules(String userId, LocalDate date) {
-        return appointmentPersistencePort.findSchedules(userId, date);
+    public List<AppointmentResponseDto> findAppointments(String userId, LocalDate date) {
+        return appointmentPersistencePort.findAppointments(userId, date);
     }
 
     @Override

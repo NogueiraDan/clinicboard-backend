@@ -84,7 +84,7 @@ public class AppointmentPersistencePortImpl implements AppointmentPersistencePor
     }
 
     @Override
-    public List<AppointmentResponseDto> findSchedules(String id, LocalDate date) {
+    public List<AppointmentResponseDto> findAppointments(String id, LocalDate date) {
         return appointmentRepository.findByDateAndUserId(date, id).stream()
                 .map(appointmentMapper::toDto)
                 .collect(Collectors.toList());

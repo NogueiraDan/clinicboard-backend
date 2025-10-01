@@ -15,7 +15,7 @@ public interface AppointmentUseCasesPort {
 
     void delete(String id);
 
-    List<AppointmentResponseDto> findSchedules(String userId, LocalDate date);
+    List<AppointmentResponseDto> findAppointments(String userId, LocalDate date);
 
     List<String> findAvailableHours(LocalDate date, String userId);
 }

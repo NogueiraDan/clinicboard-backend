@@ -36,8 +36,8 @@ public class AppointmentRestController {
     }
 
     @GetMapping("/{userId}/date")
-    public List<AppointmentResponseDto> findSchedules(@PathVariable String userId, @RequestParam LocalDate date) {
-        return appointmentUseCasesPort.findSchedules(userId, date);
+    public List<AppointmentResponseDto> findAppointments(@PathVariable String userId, @RequestParam LocalDate date) {
+        return appointmentUseCasesPort.findAppointments(userId, date);
     }
 
     @GetMapping("/{userId}/available")
