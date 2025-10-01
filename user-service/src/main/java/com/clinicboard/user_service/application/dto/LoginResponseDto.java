@@ -16,6 +16,7 @@ public class LoginResponseDto {
     private String id;
     private String name;
     private String email;
+    private String contact;
     private UserRole role;
     private String access_token;
 }
