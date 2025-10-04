@@ -84,7 +84,6 @@ jobs:
       - name: Build and test with Maven
         run: |
           cd business-service
-          mvn clean install
           mvn clean test jacoco:report
 
   notification-service:
