@@ -1,0 +1,108 @@
+name: CI - ClinicBoard Microservices
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  filter:
+    runs-on: ubuntu-latest
+    outputs:
+      user-service: ${{ steps.filter.outputs.user-service }}
+      business-service: ${{ steps.filter.outputs.business-service }}
+      notification-service: ${{ steps.filter.outputs.notification-service }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Debug - Show trigger info
+        run: |
+          echo "🔍 CI disparado por: ${{ github.event_name }}"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "👤 Autor: ${{ github.actor }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "🎯 Ref: ${{ github.ref }}"
+      
+      - name: Paths filter
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            user-service:
+              - 'user-service/**'
+            business-service:
+              - 'business-service/**'
+            notification-service:
+              - 'notification-service/**'
+      
+      - name: Debug - Show filter results
+        run: |
+          echo "🔍 Filter results:"
+          echo "User Service: ${{ steps.filter.outputs.user-service }}"
+          echo "Business Service: ${{ steps.filter.outputs.business-service }}"
+          echo "Notification Service: ${{ steps.filter.outputs.notification-service }}"
+          
+  user-service:
+    needs: filter
+    # if: ${{ needs.filter.outputs['user-service'] == 'true' }}
+    if: ${{ needs.filter.outputs.user-service == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Build and test with Maven
+        run: |
+          cd user-service
+          mvn clean install
+
+  business-service:
+    needs: filter
+    # if: ${{ needs.filter.outputs['business-service'] == 'true' }}
+    if: ${{ needs.filter.outputs.business-service == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Build and test with Maven
+        run: |
+          cd business-service
+          mvn clean install
+          mvn clean test jacoco:report
+
+  notification-service:
+    needs: filter
+    # if: ${{ needs.filter.outputs['notification-service'] == 'true' }}
+    if: ${{ needs.filter.outputs.notification-service == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Build and test with Maven
+        run: |
+          cd notification-service
+          mvn clean install
