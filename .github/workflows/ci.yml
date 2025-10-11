@@ -64,7 +64,7 @@ jobs:
       - name: Build and test with Maven
         run: |
           cd user-service
-          mvn clean install
+          mvn clean test jacoco:report
 
   business-service:
     needs: filter
