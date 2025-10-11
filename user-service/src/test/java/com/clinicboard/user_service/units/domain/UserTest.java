@@ -60,7 +60,7 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Deve retornar authorities corretas para ADMIN")
+    @DisplayName("Deve retornar authorities corretas para role ADMIN")
     void deveRetornarAuthoritiesCorretasParaAdmin() {
         // Given
         User user = new User();
