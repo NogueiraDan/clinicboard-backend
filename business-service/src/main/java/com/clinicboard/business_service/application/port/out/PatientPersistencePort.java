@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.clinicboard.business_service.application.dto.PatientRequestDto;
 import com.clinicboard.business_service.application.dto.PatientResponseDto;
+import com.clinicboard.business_service.infrastructure.adapter.out.persistence.PatientRepository;
 
 
 public interface PatientPersistencePort {
@@ -21,4 +22,6 @@ public interface PatientPersistencePort {
     void delete(String id);
 
     PatientResponseDto findOne(String id);
+
+    PatientRepository getPatientRepository();
 }

@@ -3,6 +3,8 @@ package com.clinicboard.business_service.units.domain;
 import com.clinicboard.business_service.domain.model.Appointment;
 import com.clinicboard.business_service.domain.model.AppointmentType;
 import com.clinicboard.business_service.domain.model.Patient;
+import com.clinicboard.business_service.domain.value_objects.ProfessionalId;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +31,7 @@ class AppointmentTest {
         appointment.setDate(LocalDate.now().plusDays(1));
         appointment.setHour("10:00");
         appointment.setType(AppointmentType.MARCACAO);
-        appointment.setUser_id("user-123");
+        appointment.setProfessionalId(ProfessionalId.of("user-123"));
         appointment.setPatient(patient);
 
         // Then
@@ -37,7 +39,7 @@ class AppointmentTest {
         assertEquals(LocalDate.now().plusDays(1), appointment.getDate());
         assertEquals("10:00", appointment.getHour());
         assertEquals(AppointmentType.MARCACAO, appointment.getType());
-        assertEquals("user-123", appointment.getUser_id());
+        assertEquals(ProfessionalId.of("user-123"), appointment.getProfessionalId());
         assertEquals(patient, appointment.getPatient());
     }
 
@@ -148,10 +150,10 @@ class AppointmentTest {
 
         // When
         Appointment appointment = new Appointment();
-        appointment.setUser_id(userId);
+        appointment.setProfessionalId(ProfessionalId.of(userId));
 
         // Then
-        assertEquals(userId, appointment.getUser_id());
+        assertEquals(userId, appointment.getProfessionalId().value());
     }
 
     @Test
@@ -193,7 +195,7 @@ class AppointmentTest {
         appointment.setDate(dataAgendamento);
         appointment.setHour("15:00");
         appointment.setType(AppointmentType.REMARCACAO);
-        appointment.setUser_id("professional-456");
+        appointment.setProfessionalId(ProfessionalId.of("professional-456"));
         appointment.setPatient(patient);
 
         // Then
@@ -202,7 +204,7 @@ class AppointmentTest {
         assertEquals(dataAgendamento, appointment.getDate());
         assertEquals("15:00", appointment.getHour());
         assertEquals(AppointmentType.REMARCACAO, appointment.getType());
-        assertEquals("professional-456", appointment.getUser_id());
+        assertEquals(ProfessionalId.of("professional-456"), appointment.getProfessionalId());
         assertEquals(patient, appointment.getPatient());
         assertEquals("João Silva", appointment.getPatient().getName());
     }

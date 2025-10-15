@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.clinicboard.business_service.application.dto.AppointmentRequestDto;
 import com.clinicboard.business_service.application.dto.AppointmentResponseDto;
+import com.clinicboard.business_service.infrastructure.adapter.out.persistence.AppointmentRepository;
 
 import java.time.LocalDate;
 
@@ -19,4 +20,6 @@ public interface AppointmentPersistencePort {
     List<AppointmentResponseDto> findAppointments(String userId, LocalDate date);
 
     List<String> findAvailableHours(LocalDate date, String userId);
+
+    AppointmentRepository getAppointmentRepository();
 }

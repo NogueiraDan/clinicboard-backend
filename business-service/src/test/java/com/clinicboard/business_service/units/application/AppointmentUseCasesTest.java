@@ -7,8 +7,8 @@ import com.clinicboard.business_service.application.port.out.EventPublisherGatew
 import com.clinicboard.business_service.application.usecase.AppointmentUseCases;
 import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
 import com.clinicboard.business_service.domain.model.AppointmentType;
+import com.clinicboard.business_service.domain.service.AppointmentSchedulingService;
 import com.clinicboard.business_service.infrastructure.adapter.in.web.exception.BusinessException;
-import com.clinicboard.business_service.infrastructure.adapter.in.web.exception.CustomGenericException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,13 +29,15 @@ class AppointmentUseCasesTest {
 
     private AppointmentPersistencePort appointmentPersistencePort;
     private EventPublisherGateway eventPublisher;
+    private AppointmentSchedulingService appointmentSchedulingService;
     private AppointmentUseCases appointmentUseCases;
 
     @BeforeEach
     void setUp() {
         appointmentPersistencePort = Mockito.mock(AppointmentPersistencePort.class);
         eventPublisher = Mockito.mock(EventPublisherGateway.class);
-        appointmentUseCases = new AppointmentUseCases(appointmentPersistencePort, eventPublisher);
+        appointmentSchedulingService = Mockito.mock(AppointmentSchedulingService.class);
+        appointmentUseCases = new AppointmentUseCases(appointmentPersistencePort, eventPublisher, appointmentSchedulingService);
     }
 
     @Test

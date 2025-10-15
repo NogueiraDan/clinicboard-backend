@@ -11,21 +11,27 @@ import com.clinicboard.business_service.application.port.in.AppointmentUseCasesP
 import com.clinicboard.business_service.application.port.out.AppointmentPersistencePort;
 import com.clinicboard.business_service.application.port.out.EventPublisherGateway;
 import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
+import com.clinicboard.business_service.domain.service.AppointmentSchedulingService;
 
 @Service
 public class AppointmentUseCases implements AppointmentUseCasesPort {
 
     private final AppointmentPersistencePort appointmentPersistencePort;
     private final EventPublisherGateway eventPublisher;
+    private final AppointmentSchedulingService appointmentSchedulingService;
 
     public AppointmentUseCases(AppointmentPersistencePort appointmentPersistencePort,
-            EventPublisherGateway eventPublisher) {
+            EventPublisherGateway eventPublisher, AppointmentSchedulingService appointmentSchedulingService) {
         this.appointmentPersistencePort = appointmentPersistencePort;
         this.eventPublisher = eventPublisher;
+        this.appointmentSchedulingService = appointmentSchedulingService;
     }
 
     @Override
     public AppointmentResponseDto create(AppointmentRequestDto appointment) {
+        appointmentSchedulingService.checkPatientHasNoSchedulingOnSameDate(appointment.getPatient_id(),
+                appointment.getDate());
+        appointmentSchedulingService.checkNoSchedulingOnSameDateTime(appointment.getDate(), appointment.getHour());
         AppointmentResponseDto appointmentResponse = appointmentPersistencePort.create(appointment);
         publishAppointmentScheduledEvent(appointmentResponse);
         return appointmentResponse;
@@ -38,6 +44,8 @@ public class AppointmentUseCases implements AppointmentUseCasesPort {
 
     @Override
     public AppointmentResponseDto update(String id, AppointmentRequestDto appointment) {
+        appointmentSchedulingService.checkNoSchedulingOnSameDateTime(appointment.getDate(), appointment.getHour());
+        appointmentSchedulingService.validateTypeUpdateScheduling(appointment.getType());
         return appointmentPersistencePort.update(id, appointment);
     }
 

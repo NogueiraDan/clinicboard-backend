@@ -3,6 +3,8 @@ package com.clinicboard.business_service.units.domain;
 import com.clinicboard.business_service.domain.model.Appointment;
 import com.clinicboard.business_service.domain.model.AppointmentType;
 import com.clinicboard.business_service.domain.model.Patient;
+import com.clinicboard.business_service.domain.value_objects.ProfessionalId;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -126,7 +128,7 @@ class PatientTest {
         appointment.setDate(LocalDate.now().plusDays(1));
         appointment.setHour("10:00");
         appointment.setType(AppointmentType.MARCACAO);
-        appointment.setUser_id("user-123");
+        appointment.setProfessionalId(ProfessionalId.of("user-123"));
 
         // When
         appointment.setPatient(patient);
