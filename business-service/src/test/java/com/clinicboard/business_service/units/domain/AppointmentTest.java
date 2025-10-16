@@ -37,7 +37,7 @@ class AppointmentTest {
         // Then
         assertNotNull(appointment);
         assertEquals(LocalDate.now().plusDays(1), appointment.getDate());
-        assertEquals("10:00", appointment.getHour());
+        assertEquals("10:00", appointment.getHour().toString());
         assertEquals(AppointmentType.MARCACAO, appointment.getType());
         assertEquals(ProfessionalId.of("user-123"), appointment.getProfessionalId());
         assertEquals(patient, appointment.getPatient());
@@ -64,7 +64,7 @@ class AppointmentTest {
         appointment.setHour(hora);
 
         // Then
-        assertEquals(hora, appointment.getHour());
+        assertEquals(hora, appointment.getHour().toString());
     }
 
     @Test
@@ -202,7 +202,7 @@ class AppointmentTest {
         assertNotNull(appointment);
         assertEquals("appt-789", appointment.getId());
         assertEquals(dataAgendamento, appointment.getDate());
-        assertEquals("15:00", appointment.getHour());
+        assertEquals("15:00", appointment.getHour().toString());
         assertEquals(AppointmentType.REMARCACAO, appointment.getType());
         assertEquals(ProfessionalId.of("professional-456"), appointment.getProfessionalId());
         assertEquals(patient, appointment.getPatient());
