@@ -16,6 +16,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     // Verifica se existe um agendamento em uma data e hora específicas
     boolean existsByDateAndHour(LocalDate date, String hour);
 
-    @Query("SELECT s FROM Appointment s WHERE s.date = :date AND s.user_id = :userId")
+    // Corrigindo a query para usar o campo correto da entidade
+    @Query("SELECT s FROM Appointment s WHERE s.date = :date AND s.professionalId.value = :userId")
     List<Appointment> findByDateAndUserId(LocalDate date, String userId);
 }

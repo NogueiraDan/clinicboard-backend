@@ -2,7 +2,6 @@ package com.clinicboard.business_service.domain.service;
 
 import org.springframework.stereotype.Service;
 
-import com.clinicboard.business_service.application.port.out.PatientPersistencePort;
 import com.clinicboard.business_service.domain.exception.BusinessException;
 import com.clinicboard.business_service.application.dto.PatientResponseDto;
 import com.clinicboard.business_service.domain.model.Patient;
@@ -13,14 +12,7 @@ import com.clinicboard.business_service.domain.model.Patient;
 @Service
 public class PatientDomainService {
 
-    private final PatientPersistencePort patientPersistencePort;
-
-    public PatientDomainService(PatientPersistencePort patientPersistencePort) {
-        this.patientPersistencePort = patientPersistencePort;
-    }
-
-    public void checkPatientExists(String patientId) {
-        boolean exists = patientPersistencePort.getPatientRepository().existsById(patientId);
+    public void validatePatientExists(boolean exists) {
         if (!exists) {
             throw new BusinessException("Paciente não encontrado.");
         }
@@ -33,6 +25,24 @@ public class PatientDomainService {
                     patient.getPhone(), patient.getAdditional_info(), patient.getUser_id());
         }
         return null;
+    }
+
+    public void validatePatientData(Patient patient) {
+        if (patient.getName() == null || patient.getName().trim().isEmpty()) {
+            throw new BusinessException("Nome do paciente é obrigatório");
+        }
+
+        if (patient.getEmail() == null || patient.getEmail().trim().isEmpty()) {
+            throw new BusinessException("Email do paciente é obrigatório");
+        }
+
+        // Outras validações de domínio
+    }
+
+    public void validateEmailUniqueness(boolean emailExists) {
+        if (emailExists) {
+            throw new BusinessException("Este paciente já está cadastrado no sistema!");
+        }
     }
 
 }

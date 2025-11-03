@@ -11,7 +11,6 @@ import com.clinicboard.business_service.application.dto.PatientResponseDto;
 import com.clinicboard.business_service.application.port.out.PatientPersistencePort;
 import com.clinicboard.business_service.domain.model.Patient;
 import com.clinicboard.business_service.domain.service.PatientDomainService;
-import com.clinicboard.business_service.infrastructure.adapter.in.web.exception.BusinessException;
 import com.clinicboard.business_service.infrastructure.adapter.in.web.exception.CustomGenericException;
 import com.clinicboard.business_service.infrastructure.adapter.out.persistence.mapper.PatientMapper;
 
@@ -33,9 +32,12 @@ public class PatientPersistencePortImpl implements PatientPersistencePort {
     public PatientResponseDto create(PatientRequestDto patient) {
         Optional<Patient> existingPatient = patientRepository.findByEmail(patient.getEmail());
 
-        if (existingPatient.isPresent())
-            throw new BusinessException("Este paciente já está cadastrado no sistema!");
+        patientDomainService.validateEmailUniqueness(existingPatient.isPresent());
+
         Patient patientDomain = patientMapper.toEntity(patient);
+
+        patientDomainService.validatePatientData(patientDomain);
+
         Patient savedPatient = patientRepository.save(patientDomain);
         return patientMapper.toDto(savedPatient);
     }
@@ -52,7 +54,6 @@ public class PatientPersistencePortImpl implements PatientPersistencePort {
         return patientRepository.findByUserId(id).stream()
                 .map(patientMapper::toDto)
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -60,6 +61,9 @@ public class PatientPersistencePortImpl implements PatientPersistencePort {
         Patient existingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new CustomGenericException("Paciente com id " + id + " não foi encontrado"));
         patientMapper.updateUserFromDto(patient, existingPatient);
+
+        patientDomainService.validatePatientData(existingPatient);
+
         return patientMapper.toDto(patientRepository.save(existingPatient));
     }
 
