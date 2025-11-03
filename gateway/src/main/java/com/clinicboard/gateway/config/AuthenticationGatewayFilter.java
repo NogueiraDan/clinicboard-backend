@@ -61,7 +61,6 @@ public class AuthenticationGatewayFilter implements GatewayFilter {
     }
 
     private Mono<UserInfo> validateTokenWithCache(String token) {
-        // 🎯 ESTRATÉGIA CORRIGIDA: Validação local do JWT
         return redisService.getUserFromCache(token)
                 .switchIfEmpty(
                         // Cache MISS - Valida JWT localmente e extrai claims
