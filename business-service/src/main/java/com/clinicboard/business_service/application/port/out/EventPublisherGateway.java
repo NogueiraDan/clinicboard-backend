@@ -1,5 +1,6 @@
 package com.clinicboard.business_service.application.port.out;
 
+import com.clinicboard.business_service.application.dto.AppointmentReminderEvent;
 import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
 
 /**
@@ -16,5 +17,7 @@ public interface EventPublisherGateway {
      * @param event o evento de agendamento criado
      */
     void publishAppointmentScheduled(AppointmentScheduledEvent event);
+
+    void publishAppointmentReminderNotification(AppointmentReminderEvent event);
 
 }

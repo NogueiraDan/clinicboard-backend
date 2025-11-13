@@ -1,5 +1,6 @@
 package com.clinicboard.business_service.infrastructure.adapter.out.messaging;
 
+import com.clinicboard.business_service.application.dto.AppointmentReminderEvent;
 import com.clinicboard.business_service.application.port.out.EventPublisherGateway;
 import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
 
@@ -31,6 +32,9 @@ public class RabbitEventPublisherGateway implements EventPublisherGateway {
 
     @Value("${app.messaging.routing-key.appointment-scheduled}")
     private String appointmentScheduledRoutingKey;
+
+    @Value("${app.messaging.routing-key.appointment-reminder}")
+    private String appointmentReminderRoutingKey;
 
     @Value("${app.messaging.dlq.exchange.events.dlq}")
     private String dlqExchange;
@@ -93,6 +97,48 @@ public class RabbitEventPublisherGateway implements EventPublisherGateway {
         } catch (Exception e) {
             log.error("Failed to send AppointmentScheduledEvent to DLQ for appointment: {}",
                     event.getAggregateId(), e);
+        }
+    }
+
+    @Override
+    @CircuitBreaker(name = "business-service", fallbackMethod = "publishAppointmentReminderFallback")
+    @Retry(name = "business-service", fallbackMethod = "publishAppointmentReminderFallback")
+    public void publishAppointmentReminderNotification(AppointmentReminderEvent event) {
+        try {
+            log.debug("Publishing appointment reminder event for appointment: {}",
+                    event.appointmentId());
+
+            if (isNotificationServiceAvailable()) {
+                rabbitTemplate.convertAndSend(
+                        eventsExchange,
+                        appointmentReminderRoutingKey,
+                        event);
+                log.info("Successfully published AppointmentReminderEvent for appointment: {}",
+                        event.appointmentId());
+            } else {
+                throw new RuntimeException("Notification service not available");
+            }
+        } catch (Exception e) {
+            log.error("Failed to publish AppointmentReminderEvent for appointment: {}",
+                    event.appointmentId(), e);
+            throw e; // Re-throw para acionar o Circuit Breaker
+        }
+    }
+
+    /**
+     * Fallback para AppointmentReminderEvent - envia para DLQ
+     */
+    public void publishAppointmentReminderFallback(AppointmentReminderEvent event, Throwable throwable) {
+        log.warn("Circuit breaker activated for AppointmentReminderEvent. Sending to DLQ. Appointment: {}. Error: {}",
+                event.appointmentId(), throwable.getMessage());
+
+        try {
+            rabbitTemplate.convertAndSend(dlqExchange, dlqRoutingKey, event);
+            log.info("AppointmentReminderEvent sent to DLQ for appointment: {}. Reason: {}",
+                    event.appointmentId(), throwable.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to send AppointmentReminderEvent to DLQ for appointment: {}",
+                    event.appointmentId(), e);
         }
     }
 

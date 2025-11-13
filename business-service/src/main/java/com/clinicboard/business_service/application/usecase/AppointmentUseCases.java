@@ -3,6 +3,7 @@ package com.clinicboard.business_service.application.usecase;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.quartz.SchedulerException;
 import org.springframework.stereotype.Service;
 
 import com.clinicboard.business_service.application.dto.AppointmentRequestDto;
@@ -12,18 +13,22 @@ import com.clinicboard.business_service.application.port.out.AppointmentPersiste
 import com.clinicboard.business_service.application.port.out.EventPublisherGateway;
 import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
 import com.clinicboard.business_service.domain.service.AppointmentSchedulingService;
+import com.clinicboard.business_service.infrastructure.adapter.out.quartz.AppointmentReminderScheduler;
 
 @Service
 public class AppointmentUseCases implements AppointmentUseCasesPort {
 
     private final AppointmentPersistencePort appointmentPersistencePort;
     private final EventPublisherGateway eventPublisher;
+    private final AppointmentReminderScheduler appointmentReminderScheduler;
     private final AppointmentSchedulingService appointmentSchedulingService;
 
     public AppointmentUseCases(AppointmentPersistencePort appointmentPersistencePort,
-            EventPublisherGateway eventPublisher, AppointmentSchedulingService appointmentSchedulingService) {
+            EventPublisherGateway eventPublisher, AppointmentReminderScheduler appointmentReminderScheduler,
+            AppointmentSchedulingService appointmentSchedulingService) {
         this.appointmentPersistencePort = appointmentPersistencePort;
         this.eventPublisher = eventPublisher;
+        this.appointmentReminderScheduler = appointmentReminderScheduler;
         this.appointmentSchedulingService = appointmentSchedulingService;
     }
 
@@ -34,6 +39,11 @@ public class AppointmentUseCases implements AppointmentUseCasesPort {
         appointmentSchedulingService.checkNoSchedulingOnSameDateTime(appointment.getDate(), appointment.getHour());
         AppointmentResponseDto appointmentResponse = appointmentPersistencePort.create(appointment);
         publishAppointmentScheduledEvent(appointmentResponse);
+        try {
+            appointmentReminderScheduler.scheduleReminder(appointmentResponse);
+        } catch (SchedulerException e) {
+            throw new RuntimeException("Falha ao agendar lembrete Quartz: " + e.getMessage(), e);
+        }
         return appointmentResponse;
     }
 
