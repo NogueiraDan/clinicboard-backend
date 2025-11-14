@@ -86,6 +86,14 @@ sequenceDiagram
 | **Traces** | Zipkin | Latest | 9411 |
 | **Logs** | Loki + Promtail | 2.9.0 | 3100 |
 
+### **📨 Messaging & Events**
+| Componente | Tecnologia | Versão | Porta |
+|------------|------------|--------|-------|
+| **Message Broker** | RabbitMQ | Latest | 5672 |
+| **Job Scheduler** | Quartz | 2.3.x | - |
+| **Circuit Breaker** | Resilience4j | 2.x | - |
+| **Async Communication** | Spring AMQP | 3.x | - |
+
 ### **🔒 Segurança & Autenticação**
 - **JWT** para autenticação stateless
 - **Cache Redis** para otimização de validação
@@ -100,6 +108,8 @@ clinicboard-backend/
 ├── 🚪 gateway/                    # API Gateway + Auth
 ├── 🔍 service-discovery/          # Eureka Server
 ├── 👤 user-service/              # Gestão de Usuários
+├── 🏥 business-service/          # Agendamentos & Pacientes
+├── 📧 notification-service/      # Notificações via RabbitMQ
 ├── 📊 _observability/            # Stack de Observabilidade
 │   ├── prometheus.yml
 │   ├── grafana/
@@ -230,6 +240,18 @@ spring:
             - Path=/user-service/**
           filters:
             - StripPrefix=1
+        - id: business-service
+          uri: lb://business-service
+          predicates:
+            - Path=/business-service/**
+          filters:
+            - StripPrefix=1
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification-service/**
+          filters:
+            - StripPrefix=1
 ```
 
 ### **Eureka - Service Discovery**
@@ -250,6 +272,42 @@ spring:
       host: redis
       port: 6379
       timeout: 2000ms
+```
+
+### **Business Service - Domain Configuration**
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+
+# Configurações de Agendamento
+appointment:
+  working-hours:
+    start: "08:00"
+    end: "18:00"
+  slot-duration: 30 # minutos
+  advance-booking-days: 30
+```
+
+### **Notification Service - Messaging**
+```yaml
+spring:
+  rabbitmq:
+    exchanges:
+      notification: notification.exchange
+    queues:
+      email: notification.email.queue
+      sms: notification.sms.queue
+    routing-keys:
+      appointment-created: appointment.created
+      appointment-reminder: appointment.reminder
 ```
 
 ---
@@ -275,6 +333,25 @@ spring:
 - **Circuit Breakers** em comunicações síncronas
 - **Health Checks** em todos os serviços
 - **Graceful degradation** com cache
+
+### **✅ Event-Driven Architecture**
+- **RabbitMQ** para comunicação assíncrona entre serviços
+- **Domain Events** para notificações automáticas
+- **Dead Letter Queue (DLQ)** para tratamento de falhas
+- **Circuit Breakers** com fallback para operações críticas
+- **Retry patterns** com backoff exponencial
+
+### **✅ Domain-Driven Design**
+- **Bounded Contexts** bem definidos (User, Business, Notification)
+- **Value Objects** para validações de domínio (CPF, Email, Phone)
+- **Aggregate Roots** para consistência de dados
+- **Repository Pattern** para abstração de persistência
+
+### **✅ Patterns Implementados**
+- **Gateway Pattern** para roteamento centralizado
+- **Service Discovery** para localização dinâmica de serviços
+- **Cache-Aside Pattern** para otimização de performance
+- **Saga Pattern** para transações distribuídas (futuro)
 
 ---
 
@@ -321,6 +398,96 @@ Content-Type: application/json
 }
 ```
 
+### **🏥 Gestão de Agendamentos**
+```bash
+# Criar agendamento
+POST /business-service/appointments
+Authorization: Bearer {jwt-token}
+Content-Type: application/json
+{
+  "patientId": 1,
+  "doctorId": 2,
+  "appointmentDate": "2024-12-20",
+  "startTime": "14:30",
+  "endTime": "15:00",
+  "description": "Consulta de rotina"
+}
+
+# Listar agendamentos do dia
+GET /business-service/appointments/today
+Authorization: Bearer {jwt-token}
+
+# Buscar horários disponíveis
+GET /business-service/appointments/available-times?date=2024-12-20
+Authorization: Bearer {jwt-token}
+
+# Atualizar status do agendamento
+PATCH /business-service/appointments/{id}/status
+Authorization: Bearer {jwt-token}
+Content-Type: application/json
+{
+  "status": "CONFIRMED"
+}
+```
+
+### **👥 Gestão de Pacientes**
+```bash
+# Criar paciente
+POST /business-service/patients
+Authorization: Bearer {jwt-token}
+Content-Type: application/json
+{
+  "name": "Maria Silva",
+  "email": "maria@email.com",
+  "phone": "(11) 99999-9999",
+  "birthDate": "1985-03-15",
+  "address": {
+    "street": "Rua das Flores, 123",
+    "city": "São Paulo",
+    "zipCode": "01234-567"
+  }
+}
+
+# Listar pacientes do usuário
+GET /business-service/patients/user/{userId}
+Authorization: Bearer {jwt-token}
+
+# Buscar paciente por ID
+GET /business-service/patients/{id}
+Authorization: Bearer {jwt-token}
+
+# Atualizar dados do paciente
+PUT /business-service/patients/{id}
+Authorization: Bearer {jwt-token}
+Content-Type: application/json
+{
+  "name": "Maria Silva Santos",
+  "phone": "(11) 88888-8888"
+}
+```
+
+### **📧 Notificações**
+```bash
+# Enviar notificação manual
+POST /notification-service/notifications/send
+Authorization: Bearer {jwt-token}
+Content-Type: application/json
+{
+  "userId": 1,
+  "type": "APPOINTMENT_REMINDER",
+  "message": "Lembrete: Consulta amanhã às 14:30",
+  "channel": "EMAIL"
+}
+
+# Listar notificações do usuário
+GET /notification-service/notifications/user/{userId}
+Authorization: Bearer {jwt-token}
+
+# Marcar notificação como lida
+PATCH /notification-service/notifications/{id}/read
+Authorization: Bearer {jwt-token}
+```
+
 ### **🔍 Health & Monitoring**
 ```bash
 # Gateway Health
@@ -338,18 +505,28 @@ GET /actuator/traces
 
 ---
 
-## 🚀 Roadmap Futuro
+## 🚀 Roadmap do Projeto
+
+### **📋 Features Implementadas** ✅
+- [x] **Gateway Service** - Roteamento e autenticação centralizada
+- [x] **User Service** - Gestão completa de usuários e autenticação JWT
+- [x] **Service Discovery** - Registro e descoberta automática de serviços
+- [x] **Business Service** - Gestão de agendamentos e pacientes
+- [x] **Notification Service** - Notificações via RabbitMQ
+- [x] **Observability Stack** - Prometheus, Grafana, Zipkin e Loki
+- [x] **Cache Distribuído** - Redis para otimização de performance
 
 ### **📋 Próximas Features**
-- [ ] **Business Service** - Gestão de agendamentos e pacientes
-- [ ] **Notification Service** - Notificações via RabbitMQ
-
+- [ ] **Database per Service** - Isolamento completo de dados por contexto
+- [ ] **API Rate Limiting** - Controle de taxa por usuário/endpoint
+- [ ] **Saga Orchestration** - Transações distribuídas consistentes
+- [ ] **API Versioning** - Versionamento semântico dos endpoints
 
 ### **🔧 Melhorias Técnicas**
-- [ ] **Database per Service** - Isolamento de dados
-- [ ] **API Rate Limiting** - Controle de taxa
 - [ ] **Service Mesh** - Istio para observabilidade avançada
 - [ ] **Event Sourcing** - Para auditoria completa
+- [ ] **CQRS Pattern** - Separação de comandos e consultas
+- [ ] **Multi-Tenancy** - Suporte para múltiplas clínicas
 
 ### **📊 Observabilidade Avançada**
 - [ ] **Alerting Rules** - Alertas automáticos no Grafana
