@@ -28,9 +28,14 @@ public class AppointmentReminderScheduler {
                 .usingJobData("hour", appointment.getHour())
                 .build();
 
-        // Agenda para 1 dia antes do atendimento
-        LocalDateTime reminderDateTime = appointment.getDate().minusDays(1)
+        // Calcula exatamente 24 horas antes do agendamento
+        LocalDateTime appointmentDateTime = appointment.getDate()
                 .atTime(LocalTime.parse(appointment.getHour()));
+        LocalDateTime reminderDateTime = appointmentDateTime.minusHours(24);
+
+        // Para testes, descomente a linha abaixo para disparar em 1 minuto
+        // LocalDateTime reminderDateTime = LocalDateTime.now().plusMinutes(1);
+
         ZonedDateTime zonedDateTime = reminderDateTime.atZone(ZoneId.systemDefault());
 
         Trigger trigger = TriggerBuilder.newTrigger()

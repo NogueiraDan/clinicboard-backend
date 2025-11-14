@@ -18,10 +18,24 @@ import org.springframework.stereotype.Component;
 public class MockNotificationGateway implements NotificationGateway {
     
     @Override
-    public void sendAppointmentScheduledNotification(String agregateId, String userId, String patientId, String message) {
+    public void sendAppointmentScheduledNotification(String agregateId, String professionalId, String patientId, String message) {
         log.info("📅 [NOTIFICATION] Agendamento Criado");
-        log.info("   Usuário: {} (ID: {})", userId, agregateId);
+        log.info("   Profissional: {} (ID: {})", professionalId, agregateId);
         log.info("   Paciente: {} (ID: {})", patientId, agregateId);
+        log.info("   Mensagem: {}", message);
+        log.info("   ===============================================");
+        
+        // TODO: Implementar envio real de notificação (email, SMS, push, etc)
+        // Aqui seria integrado com serviços como SendGrid, Twilio, Firebase, etc.
+    }
+
+    @Override
+    public void sendAppointmentReminderNotification(String appointmentId, String userId, String patientId,
+            String message) {
+        // TODO Auto-generated method stub
+        log.info("⏰ [NOTIFICATION] Lembrete de Agendamento");
+        log.info("   Usuário: {} (ID: {})", userId, appointmentId);
+        log.info("   Paciente: {} (ID: {})", patientId, appointmentId);
         log.info("   Mensagem: {}", message);
         log.info("   ===============================================");
         

@@ -70,9 +70,8 @@ public class AppointmentPersistencePortImpl implements AppointmentPersistencePor
 
         return allHours.stream()
                 .filter(hour -> !appointments.stream()
-                        .anyMatch(appointment -> appointment.getHour().equals(hour)))
+                        .anyMatch(appointment -> appointment.getHour().value().equals(hour)))
                 .collect(Collectors.toList());
-
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.clinicboard.business_service.domain.value_objects;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +17,8 @@ import java.util.Objects;
  * - Imutabilidade garantida
  */
 @Embeddable
-public record Hour(String value) {
+@AttributeOverride(name = "value", column = @Column(name = "hour"))
+public record Hour(@Column(name = "hour") String value) {
     
     private static final LocalTime OPENING_TIME = LocalTime.of(8, 0);
     private static final LocalTime CLOSING_TIME = LocalTime.of(21, 0);
@@ -59,14 +62,11 @@ public record Hour(String value) {
             
             if (time.isBefore(OPENING_TIME) || time.isAfter(CLOSING_TIME)) {
                 throw new IllegalArgumentException(
-                    String.format("Hour must be between %s and %s, got: %s", 
-                        OPENING_TIME.format(FORMATTER), 
-                        CLOSING_TIME.format(FORMATTER), 
-                        hour)
-                );
+                    String.format("Hour %s is outside business hours (%s - %s)", 
+                        hour, OPENING_TIME, CLOSING_TIME));
             }
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid hour format: " + hour, e);
+            throw new IllegalArgumentException("Invalid hour format: " + hour);
         }
     }
     

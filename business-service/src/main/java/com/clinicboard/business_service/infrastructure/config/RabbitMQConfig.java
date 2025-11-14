@@ -36,6 +36,9 @@ public class RabbitMQConfig {
     @Value("${app.messaging.routing-key.appointment-scheduled}")
     private String appointmentScheduledRoutingKey;
 
+    @Value("${app.messaging.routing-key.appointment-reminder}")
+    private String appointmentReminderRoutingKey;
+
     @Value("${app.messaging.routing-key.appointment-canceled}")
     private String appointmentCanceledRoutingKey;
 

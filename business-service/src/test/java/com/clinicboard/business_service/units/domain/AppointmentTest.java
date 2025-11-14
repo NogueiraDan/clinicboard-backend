@@ -4,6 +4,7 @@ import com.clinicboard.business_service.domain.model.Appointment;
 import com.clinicboard.business_service.domain.model.AppointmentType;
 import com.clinicboard.business_service.domain.model.Patient;
 import com.clinicboard.business_service.domain.value_objects.ProfessionalId;
+import com.clinicboard.business_service.domain.value_objects.Hour;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class AppointmentTest {
         // When
         Appointment appointment = new Appointment();
         appointment.setDate(LocalDate.now().plusDays(1));
-        appointment.setHour("10:00");
+        appointment.setHour(Hour.of("10:00"));
         appointment.setType(AppointmentType.MARCACAO);
         appointment.setProfessionalId(ProfessionalId.of("user-123"));
         appointment.setPatient(patient);
@@ -61,7 +62,7 @@ class AppointmentTest {
     void deveAceitarHorariosValidosDoFuncionamento(String hora) {
         // Given & When
         Appointment appointment = new Appointment();
-        appointment.setHour(hora);
+        appointment.setHour(Hour.of(hora));
 
         // Then
         assertEquals(hora, appointment.getHour().toString());
@@ -78,7 +79,7 @@ class AppointmentTest {
         Appointment appointment = new Appointment();
         appointment.setId("appt-456");
         appointment.setDate(LocalDate.now().plusDays(1));
-        appointment.setHour("10:00");
+        appointment.setHour(Hour.of("10:00"));
         appointment.setType(AppointmentType.MARCACAO);
 
         // When
@@ -126,15 +127,15 @@ class AppointmentTest {
         // Given
         Appointment appointment1 = new Appointment();
         appointment1.setId("appt-123");
-        appointment1.setHour("10:00");
+        appointment1.setHour(Hour.of("10:00"));
 
         Appointment appointment2 = new Appointment();
         appointment2.setId("appt-123");
-        appointment2.setHour("14:00"); // Hora diferente
+        appointment2.setHour(Hour.of("14:00")); // Hora diferente
 
         Appointment appointment3 = new Appointment();
         appointment3.setId("appt-456");
-        appointment3.setHour("10:00"); // ID diferente
+        appointment3.setHour(Hour.of("10:00")); // ID diferente
 
         // Then
         assertEquals(appointment1, appointment2); // Mesmo ID
@@ -193,7 +194,7 @@ class AppointmentTest {
         Appointment appointment = new Appointment();
         appointment.setId("appt-789");
         appointment.setDate(dataAgendamento);
-        appointment.setHour("15:00");
+        appointment.setHour(Hour.of("15:00"));
         appointment.setType(AppointmentType.REMARCACAO);
         appointment.setProfessionalId(ProfessionalId.of("professional-456"));
         appointment.setPatient(patient);

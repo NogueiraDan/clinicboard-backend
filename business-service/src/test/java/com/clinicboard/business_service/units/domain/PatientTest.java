@@ -4,6 +4,7 @@ import com.clinicboard.business_service.domain.model.Appointment;
 import com.clinicboard.business_service.domain.model.AppointmentType;
 import com.clinicboard.business_service.domain.model.Patient;
 import com.clinicboard.business_service.domain.value_objects.ProfessionalId;
+import com.clinicboard.business_service.domain.value_objects.Hour;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,14 +64,14 @@ class PatientTest {
         Appointment appointment1 = new Appointment();
         appointment1.setId("appt-1");
         appointment1.setDate(LocalDate.now().plusDays(1));
-        appointment1.setHour("10:00");
+        appointment1.setHour(Hour.of("10:00"));
         appointment1.setType(AppointmentType.MARCACAO);
         appointment1.setPatient(patient);
 
         Appointment appointment2 = new Appointment();
         appointment2.setId("appt-2");
         appointment2.setDate(LocalDate.now().plusDays(2));
-        appointment2.setHour("14:00");
+        appointment2.setHour(Hour.of("14:00"));
         appointment2.setType(AppointmentType.REMARCACAO);
         appointment2.setPatient(patient);
 
@@ -126,7 +127,7 @@ class PatientTest {
         Appointment appointment = new Appointment();
         appointment.setId("appt-1");
         appointment.setDate(LocalDate.now().plusDays(1));
-        appointment.setHour("10:00");
+        appointment.setHour(Hour.of("10:00"));
         appointment.setType(AppointmentType.MARCACAO);
         appointment.setProfessionalId(ProfessionalId.of("user-123"));
 

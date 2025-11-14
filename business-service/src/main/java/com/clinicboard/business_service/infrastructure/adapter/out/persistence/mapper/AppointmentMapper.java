@@ -36,7 +36,7 @@ public interface AppointmentMapper {
 
     @Named("uuidToPatient")
     default Patient uuidToPatient(String patientId) {
-        if (patientId == null) {
+        if (patientId == null || patientId.trim().isEmpty()) {
             return null;
         }
         Patient patient = new Patient();
@@ -57,7 +57,11 @@ public interface AppointmentMapper {
         if (hourString == null || hourString.trim().isEmpty()) {
             return null;
         }
-        return Hour.of(hourString);
+        try {
+            return new Hour(hourString);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid hour format: " + hourString, e);
+        }
     }
 
     @Named("hourToString")

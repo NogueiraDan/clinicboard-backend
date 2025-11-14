@@ -13,10 +13,10 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppointmentScheduledEvent implements DomainEvent {
+public class AppointmentReminderEvent implements DomainEvent {
 
-    @JsonProperty("aggregateId")
-    private String aggregateId;
+    @JsonProperty("appointmentId")
+    private String appointmentId;
 
     @JsonProperty("patientId")
     private String patientId;
@@ -43,7 +43,7 @@ public class AppointmentScheduledEvent implements DomainEvent {
 
     @Override
     public String getAggregateId() {
-        return this.aggregateId;
+        return this.appointmentId;
     }
 
     public String getProfessionalId() {

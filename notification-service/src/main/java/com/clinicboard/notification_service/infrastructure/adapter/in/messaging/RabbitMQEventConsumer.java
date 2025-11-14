@@ -1,6 +1,7 @@
 package com.clinicboard.notification_service.infrastructure.adapter.in.messaging;
 
 import com.clinicboard.notification_service.application.port.in.ProcessAppointmentEventUseCase;
+import com.clinicboard.notification_service.domain.event.AppointmentReminderEvent;
 import com.clinicboard.notification_service.domain.event.AppointmentScheduledEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Adaptador de entrada para consumo de eventos via RabbitMQ. * 
+ * Adaptador de entrada para consumo de eventos via RabbitMQ.
  * Implementa Circuit Breaker pattern através de Dead Letter Queue (DLQ)
  * para tratamento de falhas e reprocessamento de mensagens.
  */
@@ -16,35 +17,52 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class RabbitMQEventConsumer {
-    
+
     private final ProcessAppointmentEventUseCase processAppointmentEventUseCase;
-    
+
     /**
      * Consome eventos de agendamento criado
      */
     @RabbitListener(queues = "${app.messaging.queue.appointment-scheduled}")
     public void handleAppointmentScheduled(AppointmentScheduledEvent event) {
         log.info("Received AppointmentScheduledEvent for appointment: {}", event.getAggregateId());
-        
+
         try {
-            processAppointmentEventUseCase.processAppointmentScheduled(event);
+            processAppointmentEventUseCase.processAppointmentScheduledEvent(event);
             log.debug("Successfully processed AppointmentScheduledEvent for appointment: {}", event.getAggregateId());
         } catch (Exception e) {
-            log.error("Failed to process AppointmentScheduledEvent for appointment: {}. Message will be sent to DLQ", 
-                event.getAggregateId(), e);
+            log.error("Failed to process AppointmentScheduledEvent for appointment: {}. Message will be sent to DLQ",
+                    event.getAggregateId(), e);
             throw e;
         }
     }
-    
-    
+
     /**
-     * Consome mensagens da Dead Letter Queue para análise e possível reprocessamento
+     * Consome eventos de lembrete de agendamento
+     */
+    @RabbitListener(queues = "${app.messaging.queue.appointment-reminder}")
+    public void handleAppointmentReminder(AppointmentReminderEvent event) {
+        log.info("Received AppointmentReminderEvent for appointment: {}", event.getAggregateId());
+
+        try {
+            processAppointmentEventUseCase.processAppointmentReminderEvent(event);
+            log.debug("Successfully processed AppointmentReminderEvent for appointment: {}", event.getAggregateId());
+        } catch (Exception e) {
+            log.error("Failed to process AppointmentReminderEvent for appointment: {}. Message will be sent to DLQ",
+                    event.getAggregateId(), e);
+            throw e;
+        }
+    }
+
+    /**
+     * Consome mensagens da Dead Letter Queue para análise e possível
+     * reprocessamento
      */
     @RabbitListener(queues = "${app.messaging.dlq.queue.events-failed}")
     public void handleFailedEvents(Object failedEvent) {
         log.warn("Received failed event in DLQ: {}", failedEvent.getClass().getSimpleName());
         log.warn("Failed event details: {}", failedEvent.toString());
-        
+
         // TODO: Implementar lógica de reprocessamento ou alerta para administradores
         // Possíveis ações:
         // 1. Tentar reprocessar após um tempo

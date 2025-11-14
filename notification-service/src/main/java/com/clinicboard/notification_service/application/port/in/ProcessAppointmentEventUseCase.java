@@ -1,5 +1,6 @@
 package com.clinicboard.notification_service.application.port.in;
 
+import com.clinicboard.notification_service.domain.event.AppointmentReminderEvent;
 import com.clinicboard.notification_service.domain.event.AppointmentScheduledEvent;
 /**
  * Porta de entrada para processamento de eventos de agendamento. * 
@@ -11,5 +12,6 @@ public interface ProcessAppointmentEventUseCase {
     /**
      * Processa evento de agendamento criado
      */
-    void processAppointmentScheduled(AppointmentScheduledEvent event);
+    void processAppointmentScheduledEvent(AppointmentScheduledEvent event);
+    void processAppointmentReminderEvent(AppointmentReminderEvent event);
 }

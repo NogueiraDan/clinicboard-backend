@@ -1,11 +1,11 @@
 package com.clinicboard.business_service.domain.model;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import com.clinicboard.business_service.domain.value_objects.Hour;
 import com.clinicboard.business_service.domain.value_objects.ProfessionalId;
 
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -17,11 +17,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "appointments")
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 public class Appointment {
 
@@ -33,19 +38,17 @@ public class Appointment {
     private LocalDate date;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "hour", nullable = false))
     private Hour hour;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AppointmentType type;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "user_id", nullable = false))
     private ProfessionalId professionalId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id")
+    @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
     // Construtores
@@ -60,6 +63,13 @@ public class Appointment {
         this.type = type;
         this.professionalId = professionalId;
         this.patient = patient;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
     }
 
     // COMPORTAMENTOS DE DOMÍNIO
@@ -84,61 +94,4 @@ public class Appointment {
         }
     }
 
-    // Getters e Setters
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Hour getHour() {
-        return hour;
-    }
-
-    public void setHour(Hour hour) {
-        this.hour = hour;
-    }
-
-    public AppointmentType getType() {
-        return type;
-    }
-
-    public void setType(AppointmentType type) {
-        this.type = type;
-    }
-
-    public ProfessionalId getProfessionalId() {
-        return professionalId;
-    }
-
-    public void setProfessionalId(ProfessionalId professionalId) {
-        this.professionalId = professionalId;
-    }
-
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
-    }
-
-     // Método de conveniência para compatibilidade
-    public void setHour(String hourString) {
-        this.hour = Hour.of(hourString);
-    }
-    
-    public String getHourValue() {
-        return hour != null ? hour.value() : null;
-    }
 }
