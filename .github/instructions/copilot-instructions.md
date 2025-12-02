@@ -24,7 +24,7 @@ O papel de Profissional tem acesso limitado, podendo apenas gerenciar seus próp
 A solução visa eliminar a necessidade desse controle compartilhado por meio de planilha Excel compartilhada, e automatizar esse processo.
 
 ### Diagram dos componentes do projeto
-![Diagrama da Arquitetura](../clinicboard.png)
+![Diagrama da Arquitetura](../../clinicboard_arch.png)
 
 ---
 
@@ -73,7 +73,6 @@ na sua obra "Learning Domain-Driven Design: Aligning Software Architecture and B
 * RabbitMQ (mensageria com Dead Letter Queue)
 * Redis (cache de tokens JWT)
 * PostgreSQL (banco de dados relacional)
-* NestJS (BFF)
 * JWT (autenticação)
 * Docker e Docker Compose (para orquestração local)
 * Testcontainers, JUnit 5, Mockito (para testes)
@@ -84,7 +83,7 @@ na sua obra "Learning Domain-Driven Design: Aligning Software Architecture and B
 
 O sistema é composto por múltiplos microsserviços Spring Boot registrados via Service Discovery (Eureka) e expostos através de um API Gateway.
 
-* O **BFF (NestJS)** atua como cliente principal, enviando requisições autenticadas ao Gateway.
+
 * A **autenticação** é baseada em JWT, com caching em Redis.
 * As chamadas entre serviços usam:
 
