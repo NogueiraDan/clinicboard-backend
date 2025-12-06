@@ -135,6 +135,12 @@
 			<artifactId>resilience4j-spring-boot3</artifactId>
 		</dependency>
 
+		<!-- Kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
 		<!-- OpenAPI Documentation -->
 		<dependency>
 			<groupId>org.springdoc</groupId>

@@ -9,6 +9,7 @@ import com.clinicboard.business_service.domain.event.AppointmentScheduledEvent;
 import com.clinicboard.business_service.domain.model.AppointmentType;
 import com.clinicboard.business_service.domain.service.AppointmentSchedulingService;
 import com.clinicboard.business_service.infrastructure.adapter.in.web.exception.BusinessException;
+import com.clinicboard.business_service.infrastructure.adapter.out.kafka.KafkaAuditEventPublisher;
 import com.clinicboard.business_service.infrastructure.adapter.out.quartz.AppointmentReminderScheduler;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,7 @@ class AppointmentUseCasesTest {
     private AppointmentSchedulingService appointmentSchedulingService;
     private AppointmentUseCases appointmentUseCases;
     private AppointmentReminderScheduler appointmentReminderScheduler;
+    private KafkaAuditEventPublisher kafkaAuditEventPublisher;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +43,8 @@ class AppointmentUseCasesTest {
         eventPublisher = Mockito.mock(EventPublisherGateway.class);
         appointmentSchedulingService = Mockito.mock(AppointmentSchedulingService.class);
         appointmentReminderScheduler = Mockito.mock(AppointmentReminderScheduler.class);
-        appointmentUseCases = new AppointmentUseCases(appointmentPersistencePort, eventPublisher, appointmentReminderScheduler, appointmentSchedulingService);
+        kafkaAuditEventPublisher = Mockito.mock(KafkaAuditEventPublisher.class);
+        appointmentUseCases = new AppointmentUseCases(appointmentPersistencePort, eventPublisher, appointmentReminderScheduler, appointmentSchedulingService, kafkaAuditEventPublisher);
     }
 
     @Test

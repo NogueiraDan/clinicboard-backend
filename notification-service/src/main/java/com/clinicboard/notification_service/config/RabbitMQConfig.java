@@ -119,7 +119,7 @@ public class RabbitMQConfig {
         // Mapeamento dos eventos do business-service para os eventos locais
         Map<String, Class<?>> idClassMapping = new HashMap<>();
         idClassMapping.put("com.clinicboard.business_service.domain.event.AppointmentScheduledEvent",
-                com.clinicboard.notification_service.domain.event.AppointmentScheduledEvent.class);
+                com.clinicboard.notification_service.notification.domain.event.AppointmentScheduledEvent.class);
 
         classMapper.setIdClassMapping(idClassMapping);
         converter.setClassMapper(classMapper);
