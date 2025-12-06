@@ -39,6 +39,16 @@
             "projectName": "gateway",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-BusinessServiceApplication<business-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.clinicboard.business_service.BusinessServiceApplication",
+            "projectName": "business-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
