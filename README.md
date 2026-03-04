@@ -15,7 +15,7 @@ Sistema de gestão clínica baseado em **arquitetura de microsserviços** utiliz
 
 ## 🏗️ Arquitetura do Sistema
 
-![Arquitetura do Projeto](./clinicboard_arch.png)
+![Arquitetura do Projeto](./docs/clinicboard_arch.png)
 
 ---
 
