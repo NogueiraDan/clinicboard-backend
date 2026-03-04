@@ -17,6 +17,109 @@ Sistema de gestão clínica baseado em **arquitetura de microsserviços** utiliz
 
 ![Arquitetura do Projeto](./docs/clinicboard_arch.png)
 
+### **Diagrama Interativo da Arquitetura**
+
+```mermaid
+graph LR
+    %% Camada de Apresentação
+    UI[UI Web]
+    
+    %% Gateway e Cache
+    Gateway[API Gateway<br/>Spring Cloud Gateway]
+    Cache[(Redis<br/>Cache)]
+    
+    %% Service Discovery
+    Discovery[Service Discovery<br/>Eureka Server]
+    
+    %% User Service
+    UserService[User Service<br/>Spring Boot App<br/>Spring Data JPA<br/>Eureka Client<br/>Auth Spring Security]
+    Professional[Professional<br/>Profile]
+    Admin[Admin<br/>Profile]
+    CB1((Circuit<br/>Breaker))
+    
+    %% Business Service
+    BusinessService[Business Service<br/>Spring Boot App<br/>Spring Data JPA<br/>Eureka Client]
+    
+    %% Notification Service
+    NotificationService[Notification Service<br/>Spring Boot App<br/>Eureka Client<br/>RabbitMQ Notifier<br/>Mensageria]
+    
+    %% Messaging Flow
+    MessagingFlow[Messaging Flow]
+    Producer[Producer]
+    Queue[Queue]
+    CB2((Circuit<br/>Breaker))
+    Consumer[Consumer]
+    DLQ[Dead Letter<br/>Queue]
+    
+    %% Database
+    DB[(Base de Dados<br/>Relacional)]
+    
+    %% Fluxos
+    UI -->|Requisição| Gateway
+    Gateway -.->|Persiste/Recupera<br/>Token| Cache
+    Gateway -->|Requisição| Discovery
+    
+    Discovery -.->|Registra-se| UserService
+    Discovery -.->|Registra-se| BusinessService
+    Discovery -.->|Registra-se| NotificationService
+    
+    UserService --> Professional
+    UserService --> Admin
+    UserService --> CB1
+    CB1 -.->|FeignClient| BusinessService
+    CB1 -->|Fallback| UserService
+    UserService --> DB
+    
+    BusinessService --> DB
+    BusinessService --> MessagingFlow
+    
+    MessagingFlow --> Producer
+    Producer -->|Eventos de mensagens<br/>ou interação| Queue
+    Queue --> CB2
+    CB2 -->|Fallback| Queue
+    CB2 --> Consumer
+    Consumer --> NotificationService
+    Consumer -.->|Consome| DLQ
+    DLQ -.->|Tentativas de<br/>reprocessamento| Consumer
+    
+    %% Estilos
+    classDef gateway fill:#4A90E2,stroke:#2E5C8A,stroke-width:3px,color:#fff
+    classDef discovery fill:#2E7D32,stroke:#1B5E20,stroke-width:3px,color:#fff
+    classDef service fill:#B0B0B0,stroke:#808080,stroke-width:2px
+    classDef profile fill:#E8E8E8,stroke:#999,stroke-width:2px
+    classDef messaging fill:#FFD700,stroke:#DAA520,stroke-width:2px
+    classDef queue fill:#FF6B35,stroke:#CC5529,stroke-width:2px,color:#fff
+    classDef circuit fill:#1E88E5,stroke:#1565C0,stroke-width:2px,color:#fff
+    classDef database fill:#FF9800,stroke:#F57C00,stroke-width:2px,color:#fff
+    classDef cache fill:#E91E63,stroke:#C2185B,stroke-width:2px,color:#fff
+    
+    class Gateway gateway
+    class Discovery discovery
+    class UserService,BusinessService,NotificationService service
+    class Professional,Admin profile
+    class MessagingFlow,Producer messaging
+    class Queue,DLQ queue
+    class CB1,CB2 circuit
+    class DB database
+    class Cache cache
+```
+
+### **Legenda dos Componentes**
+
+| Componente | Descrição | Tecnologias |
+|------------|-----------|-------------|
+| 🌐 **UI Web** | Interface do usuário | React/Angular |
+| 🚪 **API Gateway** | Roteamento, autenticação, cache | Spring Cloud Gateway, Redis |
+| 🔍 **Service Discovery** | Registro e descoberta de serviços | Netflix Eureka |
+| 👤 **User Service** | Autenticação JWT, gestão de usuários | Spring Security, JPA, Feign |
+| 🏥 **Business Service** | Agendamentos e pacientes | Spring Data JPA, RabbitMQ |
+| 📧 **Notification Service** | Notificações assíncronas | RabbitMQ, Kafka, Email/SMS |
+| 🔄 **Messaging Flow** | Comunicação event-driven | RabbitMQ/Kafka |
+| 🔌 **Circuit Breaker** | Resiliência e fallback | Resilience4j |
+| 💀 **Dead Letter Queue** | Reprocessamento de falhas | RabbitMQ DLQ |
+| 🗄️ **Redis Cache** | Cache distribuído (TTL: 1h) | Redis 7.x |
+| 🐘 **Database** | Persistência relacional | PostgreSQL 15+ |
+
 ---
 
 ## 🔄 Fluxo Detalhado de Requisições
