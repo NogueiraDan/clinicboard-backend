@@ -1,0 +1,1941 @@
+{
+  "info": {
+    "_postman_id": "2223f84d-9386-4c22-a55b-9cd392c8337d",
+    "name": "ClinicBoard",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "20573751"
+  },
+  "item": [
+    {
+      "name": "Users Module",
+      "item": [
+        {
+          "name": "Save",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"John Doe\",\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"SenhaForte123!\",\n\t\"contact\": \"+5583987654321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8081/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "var token = jsonData.accessToken || jsonData.access_token;",
+                  "if (token) {",
+                  "    pm.collectionVariables.set(\"access_token\", token);",
+                  "    var payload = JSON.parse(atob(token.split('.')[1]));",
+                  "    var userId = jsonData.id || payload.sub;",
+                  "    if (userId) pm.collectionVariables.set(\"user_id\", userId);",
+                  "    var role = jsonData.role || payload.role;",
+                  "    if (role) pm.collectionVariables.set(\"role\", role);",
+                  "    console.log('Token salvo. User ID:', userId, 'Role:', role);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"email\": \"daniel.silva@example.com\",\n\t\"password\": \"SenhaForte123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8081/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By Id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Gil Goiaba Atualizado\",\n    \"email\": \"gil.goiaba@test.com\",\n    \"contact\": \"+5583986745321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/{{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/users/{{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Business Module",
+      "item": [
+        {
+          "name": "Save",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"professionalId\": \"{{user_id}}\",\n\t\"fullName\": \"José da Costa Silva\",\n\t\"birthDate\": \"1985-03-15\",\n\t\"phoneNumber\": \"+5511987654321\",\n\t\"email\": \"jose.costa@example.com\",\n\t\"observations\": \"Paciente com histórico de ansiedade. Prefere sessões no período da manhã.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/v1/patients",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "v1",
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/patients",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By Id",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/patients/{{patient_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "patients",
+                "{{patient_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By ProfessionalId",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/patients/professional/{{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "patients",
+                "professional",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\t\"name\": \"Antonio Silva\",\n\t\t\"email\": \"antonio.silva@example.com\",\n\t\t\"contact\": \"+5511999999999\"\n\t}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/patients/{{patient_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "patients",
+                "{{patient_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/patients/search?param=email&value=costa",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "patients",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "param",
+                  "value": "email"
+                },
+                {
+                  "key": "value",
+                  "value": "costa"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find All - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Save Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"patientId\": \"{{patient_id}}\",\n\t\"professionalId\": \"{{user_id}}\",\n\t\"appointmentDateTime\": \"2025-09-10T15:00:00\",\n\t\"notes\": \"Paciente com ansiedade\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/v1/appointments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "v1",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By ProfessionalId - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/appointments/professional/{{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "appointments",
+                "professional",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Find By PatientId - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/appointments/patient/{{patient_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "appointments",
+                "patient",
+                "{{patient_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"date\": \"2025-04-28T14:30:00\",\n\t\"professionalId\": \"{{user_id}}\",\n\t\"patientId\": \"{{patient_id}}\",\n\t\"observation\": \"Paciente com sintomas de depressão.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/appointments/{{appointment_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/search/{{user_id}}?param=status&value=pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "search",
+                "{{user_id}}"
+              ],
+              "query": [
+                {
+                  "key": "param",
+                  "value": "status"
+                },
+                {
+                  "key": "value",
+                  "value": "pending"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "FindByDate - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/professional?id={{user_id}}&date=2025-06-20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "professional"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "{{user_id}}"
+                },
+                {
+                  "key": "date",
+                  "value": "2025-06-20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "FindAvailableTimes - Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/available-times?professionalId={{user_id}}&date=2025-05-24",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "available-times"
+              ],
+              "query": [
+                {
+                  "key": "professionalId",
+                  "value": "{{user_id}}"
+                },
+                {
+                  "key": "date",
+                  "value": "2025-05-24"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.2.0"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/{{appointment_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "BFF",
+      "item": [
+        {
+          "name": "BFF - Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "var token = jsonData.accessToken || jsonData.access_token;",
+                  "if (token) {",
+                  "    pm.collectionVariables.set(\"access_token\", token);",
+                  "    var payload = JSON.parse(atob(token.split('.')[1]));",
+                  "    var userId = jsonData.id || payload.sub;",
+                  "    if (userId) pm.collectionVariables.set(\"user_id\", userId);",
+                  "    var role = jsonData.role || payload.role;",
+                  "    if (role) pm.collectionVariables.set(\"role\", role);",
+                  "    console.log('Token salvo. User ID:', userId, 'Role:', role);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"email\": \"daniel.silva@example.com\",\n\t\"password\": \"SenhaForte123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{bffBaseUrl}}/auth/login",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Find Appointments",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{bffBaseUrl}}/appointments/professional/{{user_id}}?date=2025-09-01",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "professional",
+                "{{user_id}}"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-09-01"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Find Available Slots Time",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{bffBaseUrl}}/appointments/available-slots?date=2025-09-02",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "available-slots"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-09-02"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Find Patient",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{bffBaseUrl}}/patients/professional/{{user_id}}",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "patients",
+                "professional",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Register",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"fullName\": \"John Doe\",\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"SenhaForte123!\",\n\t\"phoneNumber\": \"+5583987654321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{bffBaseUrl}}/auth/register",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Register Patient",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"professionalId\": \"{{user_id}}\",\n\t\"fullName\": \"João da Costa Silva\",\n\t\"birthDate\": \"1985-03-15\",\n\t\"phoneNumber\": \"+5511987654321\",\n\t\"email\": \"joao.costa@example.com\",\n\t\"observations\": \"Paciente com histórico de ansiedade. Prefere sessões no período da manhã.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{bffBaseUrl}}/patients",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Register Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"patientId\": \"{{patient_id}}\",\n\t\"professionalId\": \"{{user_id}}\",\n\t\"appointmentDateTime\": \"2025-09-10T15:00:00\",\n\t\"notes\": \"Paciente com ansiedade\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{bffBaseUrl}}/appointments",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BFF - Find Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{bffBaseUrl}}/appointments/{{appointment_id}}",
+              "host": [
+                "{{bffBaseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointment_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GATEWAY",
+      "item": [
+        {
+          "name": "AUTH - Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "var token = jsonData.accessToken || jsonData.access_token;",
+                  "if (token) {",
+                  "    pm.collectionVariables.set(\"access_token\", token);",
+                  "    var payload = JSON.parse(atob(token.split('.')[1]));",
+                  "    var userId = jsonData.id || payload.sub;",
+                  "    if (userId) pm.collectionVariables.set(\"user_id\", userId);",
+                  "    var role = jsonData.role || payload.role;",
+                  "    if (role) pm.collectionVariables.set(\"role\", role);",
+                  "    console.log('Token salvo. User ID:', userId, 'Role:', role);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"email\": \"usuario.teste@teste.com\",\n\t\"password\": \"SenhaForte123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user-service/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-service",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AUTH - Register",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"fullName\": \"John Doe\",\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"SenhaForte123!\",\n\t\"phoneNumber\": \"+5583987654321\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GATEWAY- Services Health",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user-service/actuator/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-service",
+                "actuator",
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "USER - User By ID",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user-service/users/{{user_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-service",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "USER - FindAll",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user-service/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-service",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - Create Patient",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"patient_id\", jsonData.id);",
+                  "    console.log('Patient ID salvo:', jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Maria Silva Santos\",\n\t\"age\": 35,\n\t\"email\": \"maria.silva@email.com\",\n\t\"phone\": \"(11) 99999-8888\",\n\t\"additional_info\": \"Paciente com histórico de hipertensão. Prefere consultas pela manhã.\",\n\t\"user_id\": \"{{user_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/business-service/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "USER - Patients By UserID",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user-service/users/business/patients/{{user_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user-service",
+                "users",
+                "business",
+                "patients",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - List Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.6.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/{{user_id}}/date?date=2025-11-16",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "{{user_id}}",
+                "date"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-11-16"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - Create Appointment",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"date\": \"2025-12-06\",\n\t\"hour\": \"14:00\",\n\t\"type\": \"MARCACAO\",\n\t\"user_id\": \"{{user_id}}\",\n\t\"patient_id\": \"{{patient_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - List Patients",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/patients/patient/{{user_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "patients",
+                "patient",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - Appointments By Date",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/appointments/{{user_id}}/date?date=2025-11-18",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "appointments",
+                "{{user_id}}",
+                "date"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-11-18"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "BUSINESS - Patient By ID",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/business-service/patients/patient/{{patient_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "business-service",
+                "patients",
+                "patient",
+                "{{patient_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "NOTIFICATION - List Audit Events",
+          "protocolProfileBehavior": {
+            "followRedirects": true,
+            "disableUrlEncoding": false,
+            "disableCookies": false
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "insomnia/11.0.1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notification-service/audit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notification-service",
+                "audit"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "HealthCheck",
+      "protocolProfileBehavior": {
+        "followRedirects": true,
+        "disableUrlEncoding": false,
+        "disableCookies": false
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "User-Agent",
+            "value": "insomnia/11.0.1"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/actuator/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "actuator",
+            "health"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "default"
+    },
+    {
+      "key": "bffBaseUrl",
+      "value": "http://localhost:8083",
+      "type": "default"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "patient_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "role",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
