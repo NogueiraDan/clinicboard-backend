@@ -64,13 +64,6 @@ public class AppointmentUseCases implements AppointmentUseCasesPort {
         //     .orElseThrow(() -> new BusinessException("Agendamento não encontrado"));
         
         // AppointmentResponseDto updatedAppointment = appointmentPersistencePort.update(id, appointment);
-        
-        // // ✅ PUBLICAR EVENTO DE AUDITORIA NO KAFKA (REMARCAÇÃO)
-        // publishRescheduleAuditEvent(
-        //     oldAppointment, 
-        //     updatedAppointment, 
-        //     appointment.getUser_id());
-        
         // return updatedAppointment;
         return appointmentPersistencePort.update(id, appointment);
     }
@@ -84,9 +77,6 @@ public class AppointmentUseCases implements AppointmentUseCasesPort {
         //     .orElseThrow(() -> new BusinessException("Agendamento não encontrado"));
         
         // appointmentPersistencePort.delete(id);
-        
-        // // ✅ PUBLICAR EVENTO DE AUDITORIA NO KAFKA (CANCELAMENTO)
-        // publishCancellationAuditEvent(appointment, "SYSTEM", "Agendamento excluído pelo sistema");
     }
 
     @Override
