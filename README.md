@@ -3,7 +3,7 @@
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.java.net/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue.svg)](https://docs.docker.com/compose/)
-[![Grafana](https://img.shields.io/badge/Observability-Grafana-orange.svg)](https://grafana.com/)
+[![RabbitMQ](https://img.shields.io/badge/Messaging-RabbitMQ-orange.svg)](https://www.rabbitmq.com/)
 
 ---
 
@@ -113,8 +113,8 @@ graph LR
 | 🔍 **Service Discovery** | Registro e descoberta de serviços | Netflix Eureka |
 | 👤 **User Service** | Autenticação JWT, gestão de usuários | Spring Security, JPA, Feign |
 | 🏥 **Business Service** | Agendamentos e pacientes | Spring Data JPA, RabbitMQ |
-| 📧 **Notification Service** | Notificações assíncronas | RabbitMQ, Kafka, Email/SMS |
-| 🔄 **Messaging Flow** | Comunicação event-driven | RabbitMQ/Kafka |
+| 📧 **Notification Service** | Notificações assíncronas | RabbitMQ, Email/SMS |
+| 🔄 **Messaging Flow** | Comunicação event-driven | RabbitMQ |
 | 🔌 **Circuit Breaker** | Resiliência e fallback | Resilience4j |
 | 💀 **Dead Letter Queue** | Reprocessamento de falhas | RabbitMQ DLQ |
 | 🗄️ **Redis Cache** | Cache distribuído (TTL: 1h) | Redis 7.x |
@@ -184,10 +184,8 @@ sequenceDiagram
 ### **📊 Observabilidade**
 | Componente | Tecnologia | Versão | Porta |
 |------------|------------|--------|-------|
-| **Métricas** | Prometheus | Latest | 9090 |
-| **Dashboard** | Grafana | Latest | 3000 |
-| **Traces** | Zipkin | Latest | 9411 |
-| **Logs** | Loki + Promtail | 2.9.0 | 3100 |
+| **Health Checks** | Spring Actuator | 3.2.x | `/actuator/health` |
+| **Métricas** | Micrometer + Actuator | 3.2.x | `/actuator/prometheus` |
 
 ### **📨 Messaging & Events**
 | Componente | Tecnologia | Versão | Porta |
@@ -213,14 +211,7 @@ clinicboard-backend/
 ├── 👤 user-service/              # Gestão de Usuários
 ├── 🏥 business-service/          # Agendamentos & Pacientes
 ├── 📧 notification-service/      # Notificações via RabbitMQ
-├── 📊 _observability/            # Stack de Observabilidade
-│   ├── prometheus.yml
-│   ├── grafana/
-│   │   └── provisioning/
-│   │       ├── dashboards/
-│   │       └── datasources/
-│   └── promtail/
-├── 🐳 docker-compose.yaml        # Orquestração
+├──  docker-compose.yaml        # Orquestração
 └── 📋 README.md
 ```
 
@@ -271,61 +262,37 @@ curl http://localhost:8080/actuator/health
 # User Service (via Gateway)
 curl http://localhost:8080/user-service/actuator/health
 
-# Prometheus Metrics
-curl http://localhost:9090
+# Business Service (via Gateway)
+curl http://localhost:8080/business-service/actuator/health
 
-# Grafana Dashboard
-# http://localhost:3000 (admin/admin)
-
-# Zipkin Traces
-curl http://localhost:9411
-
-# Loki Logs
-curl http://localhost:3100/ready
+# RabbitMQ Management
+# http://localhost:15672 (guest/guest)
 ```
 
 ---
 
 ## 📊 Observabilidade & Monitoramento
 
-### **🎯 Dashboard Grafana**
-O projeto inclui um **dashboard profissional** com:
+### **🎯 Health Checks via Spring Actuator**
+Todos os microsserviços expõem endpoints de monitoramento via Spring Boot Actuator:
 
-#### **🚦 STATUS GERAL DOS SERVIÇOS**
-- Status UP/DOWN de todos os microsserviços
-- Contadores de erros 5xx e 4xx em tempo real
+#### **🚦 STATUS DOS SERVIÇOS**
+```bash
+# Health geral (status UP/DOWN)
+GET /actuator/health
 
-#### **📈 PERFORMANCE E TRÁFEGO**
-- Taxa de requisições HTTP/s por serviço
-- Latência P95 e média de resposta
+# Métricas no formato Prometheus (pode ser consumido por qualquer coletor externo)
+GET /actuator/prometheus
+```
 
-#### **🚨 MONITORAMENTO DE ERROS**
-- Taxa de erros por status code (2xx/4xx/5xx)
-- SLA - Disponibilidade percentual (99%+)
-
-#### **💻 RECURSOS DO SISTEMA**
-- CPU do sistema por serviço
+#### **📈 MÉTRICAS DISPONÍVEIS**
+- Status UP/DOWN de cada microsserviço
+- Métricas de requisições HTTP (contagem, latência)
 - Memória JVM Heap utilizada
 - Tempo de atividade (uptime)
+- Operações Redis por segundo (Gateway)
 
-#### **🗄️ CACHE REDIS & NEGÓCIO**
-- Operações Redis por segundo
-- Métricas de autenticação e operações de usuário
-
-### **📊 Métricas Importantes**
-```bash
-# Request Rate
-sum(rate(http_server_requests_seconds_count[1m])) by (instance)
-
-# P95 Latency
-histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[1m])) by (le))
-
-# Error Rate
-sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
-
-# Cache Operations
-rate(lettuce_command_completion_total{job="gateway"}[1m])
-```
+> **Nota**: A stack de observabilidade completa (Prometheus, Grafana, Loki, Zipkin) está prevista no roadmap para um eventual ambiente de produção dedicado.
 
 ---
 
@@ -426,11 +393,10 @@ spring:
 - **TTL configurável** (default: 1 hora)
 - **Fallback** para validação local do JWT
 
-### **✅ Observabilidade Completa**
-- **Métricas**: Prometheus + Grafana
-- **Logs**: Loki + Promtail
-- **Traces**: Zipkin
-- **Dashboards**: Painéis profissionais pre-configurados
+### **✅ Observabilidade**
+- **Health Checks**: Spring Actuator em todos os serviços
+- **Métricas**: Micrometer + endpoint `/actuator/prometheus` (pronto para integração com coletor externo)
+- **Logs**: Saída estruturada via Logback
 
 ### **✅ Resiliência**
 - **Circuit Breakers** em comunicações síncronas
@@ -599,11 +565,8 @@ GET /actuator/health
 # Service Discovery
 GET http://localhost:8761
 
-# Prometheus Metrics
+# Métricas (formato Prometheus)
 GET /actuator/prometheus
-
-# Traces Endpoint
-GET /actuator/traces
 ```
 
 ---
@@ -616,7 +579,7 @@ GET /actuator/traces
 - [x] **Service Discovery** - Registro e descoberta automática de serviços
 - [x] **Business Service** - Gestão de agendamentos e pacientes
 - [x] **Notification Service** - Notificações via RabbitMQ
-- [x] **Observability Stack** - Prometheus, Grafana, Zipkin e Loki
+- [x] **Health Checks** - Spring Actuator em todos os microsserviços
 - [x] **Cache Distribuído** - Redis para otimização de performance
 
 ### **📋 Próximas Features**
@@ -632,10 +595,10 @@ GET /actuator/traces
 - [ ] **Multi-Tenancy** - Suporte para múltiplas clínicas
 
 ### **📊 Observabilidade Avançada**
-- [ ] **Alerting Rules** - Alertas automáticos no Grafana
-- [ ] **Custom Dashboards** - Por domínio de negócio
-- [ ] **Distributed Tracing** - Correlação completa entre serviços
-- [ ] **Log Aggregation** - Busca avançada nos logs
+- [ ] **Prometheus + Grafana** - Dashboards profissionais de métricas
+- [ ] **Distributed Tracing** - Zipkin para correlação de traces entre serviços
+- [ ] **Log Aggregation** - Loki + Promtail para busca avançada nos logs
+- [ ] **Alerting Rules** - Alertas automáticos em produção
 
 ---
 
