@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "2223f84d-9386-4c22-a55b-9cd392c8337d",
+    "_postman_id": "83a83adf-0e34-4950-be7f-0a6dd20875e2",
     "name": "ClinicBoard",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "20573751"
@@ -979,320 +979,6 @@
       ]
     },
     {
-      "name": "BFF",
-      "item": [
-        {
-          "name": "BFF - Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "var jsonData = pm.response.json();",
-                  "var token = jsonData.accessToken || jsonData.access_token;",
-                  "if (token) {",
-                  "    pm.collectionVariables.set(\"access_token\", token);",
-                  "    var payload = JSON.parse(atob(token.split('.')[1]));",
-                  "    var userId = jsonData.id || payload.sub;",
-                  "    if (userId) pm.collectionVariables.set(\"user_id\", userId);",
-                  "    var role = jsonData.role || payload.role;",
-                  "    if (role) pm.collectionVariables.set(\"role\", role);",
-                  "    console.log('Token salvo. User ID:', userId, 'Role:', role);",
-                  "}"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"email\": \"daniel.silva@example.com\",\n\t\"password\": \"SenhaForte123!\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{bffBaseUrl}}/auth/login",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Find Appointments",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "url": {
-              "raw": "{{bffBaseUrl}}/appointments/professional/{{user_id}}?date=2025-09-01",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "appointments",
-                "professional",
-                "{{user_id}}"
-              ],
-              "query": [
-                {
-                  "key": "date",
-                  "value": "2025-09-01"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Find Available Slots Time",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "url": {
-              "raw": "{{bffBaseUrl}}/appointments/available-slots?date=2025-09-02",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "appointments",
-                "available-slots"
-              ],
-              "query": [
-                {
-                  "key": "date",
-                  "value": "2025-09-02"
-                }
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Find Patient",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "url": {
-              "raw": "{{bffBaseUrl}}/patients/professional/{{user_id}}",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "patients",
-                "professional",
-                "{{user_id}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Register",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"fullName\": \"John Doe\",\n\t\"email\": \"john.doe@example.com\",\n\t\"password\": \"SenhaForte123!\",\n\t\"phoneNumber\": \"+5583987654321\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{bffBaseUrl}}/auth/register",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Register Patient",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"professionalId\": \"{{user_id}}\",\n\t\"fullName\": \"João da Costa Silva\",\n\t\"birthDate\": \"1985-03-15\",\n\t\"phoneNumber\": \"+5511987654321\",\n\t\"email\": \"joao.costa@example.com\",\n\t\"observations\": \"Paciente com histórico de ansiedade. Prefere sessões no período da manhã.\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{bffBaseUrl}}/patients",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "patients"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Register Appointment",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"patientId\": \"{{patient_id}}\",\n\t\"professionalId\": \"{{user_id}}\",\n\t\"appointmentDateTime\": \"2025-09-10T15:00:00\",\n\t\"notes\": \"Paciente com ansiedade\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{bffBaseUrl}}/appointments",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "appointments"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "BFF - Find Appointment",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "url": {
-              "raw": "{{bffBaseUrl}}/appointments/{{appointment_id}}",
-              "host": [
-                "{{bffBaseUrl}}"
-              ],
-              "path": [
-                "appointments",
-                "{{appointment_id}}"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "GATEWAY",
       "item": [
         {
@@ -1387,11 +1073,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/register",
+              "raw": "{{baseUrl}}/user-service/auth/register",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
+                "user-service",
                 "auth",
                 "register"
               ]
@@ -1689,7 +1376,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"date\": \"2025-12-06\",\n\t\"hour\": \"14:00\",\n\t\"type\": \"MARCACAO\",\n\t\"user_id\": \"{{user_id}}\",\n\t\"patient_id\": \"{{patient_id}}\"\n}",
+              "raw": "{\n\t\"date\": \"2026-03-12\",\n\t\"hour\": \"16:00\",\n\t\"type\": \"MARCACAO\",\n\t\"user_id\": \"{{user_id}}\",\n\t\"patient_id\": \"{{patient_id}}\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1775,7 +1462,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/business-service/appointments/{{user_id}}/date?date=2025-11-18",
+              "raw": "{{baseUrl}}/business-service/appointments/{{user_id}}/date?date=2026-03-11",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1788,7 +1475,7 @@
               "query": [
                 {
                   "key": "date",
-                  "value": "2025-11-18"
+                  "value": "2026-03-11"
                 }
               ]
             }
@@ -1834,44 +1521,6 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "NOTIFICATION - List Audit Events",
-          "protocolProfileBehavior": {
-            "followRedirects": true,
-            "disableUrlEncoding": false,
-            "disableCookies": false
-          },
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "User-Agent",
-                "value": "insomnia/11.0.1"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/notification-service/audit",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notification-service",
-                "audit"
-              ]
-            }
-          },
-          "response": []
         }
       ]
     },
@@ -1891,12 +1540,10 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8081/actuator/health",
-          "protocol": "http",
+          "raw": "{{baseUrl}}/actuator/health",
           "host": [
-            "localhost"
+            "{{baseUrl}}"
           ],
-          "port": "8081",
           "path": [
             "actuator",
             "health"
@@ -1909,33 +1556,27 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080",
-      "type": "default"
+      "value": "http://localhost:8080"
     },
     {
       "key": "bffBaseUrl",
-      "value": "http://localhost:8083",
-      "type": "default"
+      "value": "http://localhost:8083"
     },
     {
       "key": "user_id",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
       "key": "patient_id",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
       "key": "access_token",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
       "key": "role",
-      "value": "",
-      "type": "default"
+      "value": ""
     }
   ]
 }
